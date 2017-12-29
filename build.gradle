@@ -1,0 +1,181 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+    classpath 'com.netflix.nebula:gradle-contacts-plugin:3.0.1'
+    classpath 'com.netflix.nebula:gradle-info-plugin:3.6.0'
+    classpath 'com.netflix.nebula:nebula-publishing-plugin:5.1.5'
+  }
+}
+
+def isCiBuild
+def isReleaseBuild
+def isDevBuild
+
+if (hasProperty('dev')) {
+  isDevBuild = true
+} else if (hasProperty('ci')) {
+  isCiBuild = true
+} else if (hasProperty('release')) {
+  isReleaseBuild = true
+} else {
+  isDevBuild = true
+}
+
+def requiresSigning = isReleaseBuild && gradle.taskGraph.hasTask("uploadArchives")
+
+version '0.0.1'
+if (isCiBuild) {
+  version += '-SNAPSHOT'
+}
+
+def projectName = 'Mnemonic Encoding'
+def projectUrl = 'https://github.com/devinrsmith/mnemonic-encoding'
+description 'Human readable encoding for small amounts of data'
+
+allprojects {
+  repositories {
+    jcenter()
+  }
+}
+
+subprojects {
+
+  apply plugin: 'java-library'
+  apply plugin: 'maven'
+  apply plugin: 'signing'
+  //apply plugin: 'maven-publish'
+  //apply plugin: 'nebula.info'
+  //apply plugin: 'nebula.info-owners'
+  //apply plugin: 'nebula.contacts'
+  //apply plugin: 'nebula.maven-publish'
+  //apply plugin: 'nebula.javadoc-jar'
+  //apply plugin: 'nebula.source-jar'
+
+  version parent.version
+  group 'com.devinrsmith.mnemonic'
+  sourceCompatibility = 1.8
+
+  dependencies {
+    // fixes warning... todo, remove?
+    testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.2'
+    testCompile 'org.junit.jupiter:junit-jupiter-params:5.0.2'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.2'
+
+    testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile 'com.google.guava:guava:23.6-jre'
+  }
+
+  task javadocJar(type: Jar) {
+    classifier 'javadoc'
+    from javadoc
+  }
+
+  task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+  }
+
+  artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+  }
+
+  // see inner comments on why we aren't doing this w/ "required"
+  if (requiresSigning) {
+    signing {
+      // Bad documentation: https://docs.gradle.org/current/userguide/signing_plugin.html
+      // https://discuss.gradle.org/t/signing-required-doesnt-work/17924/6
+      // The following doesn't work when signing properties are set
+      //required { requiresSigning }
+      sign configurations.archives
+    }
+  } else {
+    task signArchives {
+      // empty
+    }
+  }
+
+  uploadArchives {
+    repositories {
+      if (isDevBuild) {
+        mavenLocal()
+      } else {
+        mavenDeployer {
+          if (requiresSigning) {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+          }
+
+          repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+            authentication(userName: ossrhUsername, password: ossrhPassword)
+          }
+
+          snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+            authentication(userName: ossrhUsername, password: ossrhPassword)
+          }
+
+          pom.project {
+            name projectName
+            description rootProject.description
+            url projectUrl
+            packaging 'jar'
+
+            scm {
+              url 'scm:git@github.com:devinrsmith/mnemonic-encoding.git'
+              connection 'git@github.com:devinrsmith/mnemonic-encoding.git'
+              developerConnection 'git@github.com:devinrsmith/mnemonic-encoding.git'
+            }
+
+            licenses {
+              license {
+                name 'todo'
+                url 'http://todo.com/todo.txt'
+              }
+            }
+
+            developers {
+              developer {
+                id 'devinrsmith'
+                name 'Devin Smith'
+                email 'devinrsmith@protonmail.com'
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  '''publishing {
+    repositories {
+      if (isDevBuild) {
+        mavenLocal()
+      } else {
+        maven {
+          credentials {
+            username ossrhUsername
+            password ossrhPassword
+          }
+          if (isCiBuild) {
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
+          } else {
+            assert isReleaseBuild
+            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+          }
+        }
+      }
+    }
+  }'''
+
+  '''contacts {
+    'devinrsmith@protonmail.com' {
+      moniker 'Devin Smith'
+      github 'devinrsmith'
+      role 'owner'
+    }
+  }'''
+}
