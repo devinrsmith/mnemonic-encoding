@@ -7,6 +7,7 @@ include 'bip39:es'
 include 'bip39:it'
 include 'rfc1751'
 include 'examples'
+include 'pgpbiometric'
 
 project(':base').name = 'mnemonic-base'
 project(':bip39').name = 'mnemonic-bip39'
@@ -16,4 +17,5 @@ project(':bip39:fr').name = 'mnemonic-bip39-fr'
 project(':bip39:it').name = 'mnemonic-bip39-it'
 project(':rfc1751').name = 'mnemonic-rfc1751'
 project(':examples').name = 'mnemonic-examples'
+project(':pgpbiometric').name = 'mnemonic-pgp'
 

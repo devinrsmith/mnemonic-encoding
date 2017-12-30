@@ -11,7 +11,7 @@ public class Bip39Encoding implements Encoding {
     Bip39Encoding(WordListInfo info) {
         final WordList wordList;
         try {
-            wordList = WordListLoader.loadWordlist(info);
+            wordList = WordListLoader.loadSortedWordlist(info);
         } catch (IOException e) {
             throw new WordListRuntimeException(e);
         }

@@ -10,7 +10,7 @@ public enum RFC1751 implements Encoding {
     RFC1751() {
         final WordList wordList;
         try {
-            wordList = WordListLoader.loadWordlist(RFC1751Info.INSTANCE);
+            wordList = WordListLoader.loadSortedWordlist(RFC1751Info.INSTANCE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

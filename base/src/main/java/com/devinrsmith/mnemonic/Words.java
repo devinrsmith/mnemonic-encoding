@@ -10,7 +10,7 @@ public class Words implements Iterable<String> {
     private final String[] words;
 
     public static Words parse(String input) {
-        final String[] words = input.split(" ");
+        final String[] words = input.split("\\s+");
         return new Words(words);
     }
 

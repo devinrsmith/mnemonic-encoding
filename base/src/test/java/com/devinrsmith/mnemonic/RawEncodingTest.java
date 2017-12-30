@@ -8,7 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RawEncodingTest {
 
-    private static final WordList WORDLIST = new WordList(new String[] {"a", "b", "c", "d", "e", "f", "g", "h"}, String::compareTo, Locale.ENGLISH);
+    private static final WordList
+        WORDLIST = new SortedWordList(new String[] {"a", "b", "c", "d", "e", "f", "g", "h"}, Locale.ENGLISH, String::compareTo);
 
     @Test
     public void name() {

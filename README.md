@@ -42,3 +42,7 @@ This project has no external dependencies.
 #### Build status
 
  * Master: [![Build Status](https://travis-ci.org/devinrsmith/mnemonic-encoding.svg?branch=master)](https://travis-ci.org/devinrsmith/mnemonic-encoding)
+ 
+#### Other TODOs
+ 
+ * Licensing issues around encoding schemes
