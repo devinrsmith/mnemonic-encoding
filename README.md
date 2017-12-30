@@ -1,6 +1,6 @@
 ### Human Encoding
 
-The goal of this project is to provide a variety of encoding and decoding functionalities for
+The goal of this project is to provide a variety of encoding (and decoding) schemes for
 reliably storing or transmitting small amounts of data in a human readable, writable, speakable,
 and listenable way. There is no single best encoding scheme for all purposes, so advice and best
 practices around scheme use cases will be provided.
@@ -46,3 +46,6 @@ This project has no external dependencies.
 #### Other TODOs
  
  * Licensing issues around encoding schemes
+ * Better bit manipulation
+ * Benchmarking with [JMH](http://openjdk.java.net/projects/code-tools/jmh/)
+ * Mutation testing with [PIT](http://pitest.org/)
